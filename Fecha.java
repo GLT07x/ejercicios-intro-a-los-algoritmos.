@@ -108,13 +108,14 @@ public class Fecha
      * Chequea si la fecha es igual a otra fecha dada
      */
     public boolean equals(Fecha otraFecha) {
-        // Implementar este método, reemplazando la línea siguiente
-        if(otraFecha == null){
+        // Implementar este método, reemplazando la línea siguiente 
+        if(dia != otraFecha.obtenerDia())
+        {
             return false;
-        } 
-        return dia == otraFecha.obtenerDia() &&
-        mes == otraFecha.obtenerMes() &&
-        anho == otraFecha.obtenerAnho();            
+        }else
+        {
+            return mes == otraFecha.obtenerMes() && anho == otraFecha.obtenerAnho();
+        }
     }
     
     /**
