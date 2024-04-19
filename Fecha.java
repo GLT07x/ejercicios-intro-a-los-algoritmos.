@@ -40,13 +40,26 @@ public class Fecha
     public Fecha(int nuevoDia, int nuevoMes, int nuevoAnho)
     {
         // Implementar este constructor
-        assert nuevoDia > 0 && nuevoDia <= 31;
+        
+        assert nuevoDia > 0 && nuevoDia <= cantDias(nuevoMes);
         assert nuevoMes > 0 && nuevoMes <=12;
-        assert nuevoAnho >= 1582;
+        assert calGregoriano(nuevoDia, nuevoMes, nuevoAnho);
+        if(!esBisiesto(nuevoAnho)){assert nuevoDia <= 28; }
         
         dia = nuevoDia;
         mes = nuevoMes;
         anho = nuevoAnho;
+    }
+    
+    /**
+     * Establece la fecha inicial del calendario Gregoriano, niguna fecha anterior es vàlida.
+     */
+    private boolean calGregoriano(int d, int m, int a)
+    {
+        Fecha fechaAux = new Fecha();
+        return ((d != fechaAux.obtenerDia() || d == fechaAux.obtenerDia()) && 
+        (m != fechaAux.obtenerMes() || m == fechaAux.obtenerMes()) && (a > fechaAux.obtenerAnho())) ||
+        (a == fechaAux.obtenerAnho() && m >= fechaAux.obtenerMes() && d >= fechaAux.obtenerDia());
     }
     
     /**
@@ -112,10 +125,9 @@ public class Fecha
         if(dia != otraFecha.obtenerDia())
         {
             return false;
-        }else
-        {
-            return mes == otraFecha.obtenerMes() && anho == otraFecha.obtenerAnho();
         }
+        
+        return mes == otraFecha.obtenerMes() && anho == otraFecha.obtenerAnho();
     }
     
     /**
@@ -124,15 +136,20 @@ public class Fecha
     public boolean esAnterior(Fecha otraFecha) {
         // Implementar este método, reemplazando la línea siguiente
         if (anho < otraFecha.obtenerAnho()) {
-        return true;
-    } else if (anho == otraFecha.obtenerAnho()) {
-        if (mes < otraFecha.obtenerMes()) {
             return true;
-        } else if (mes == otraFecha.obtenerMes()) {
-            return dia < otraFecha.obtenerDia();
+        } else {
+            if (anho == otraFecha.obtenerAnho() && mes < otraFecha.obtenerMes()) {
+                return true;
+            } else{ 
+                if (mes == otraFecha.obtenerMes() && dia < otraFecha.obtenerDia()) {
+                    //return dia < otraFecha.obtenerDia();
+                    return true;
+                } else {
+                    return false;
+                }
+            }
         }
-    }
-    return false;
+        
     }
     
     /**
@@ -146,17 +163,17 @@ public class Fecha
         Fecha fechaTemp = new Fecha(dia, mes, anho);
 
         while (!fechaTemp.equals(otraFecha)){
-        if (fechaTemp.dia < cantDias(fechaTemp.mes)) {
-            fechaTemp.dia++;
-        }else{
-            fechaTemp.dia = 1;
-            if (fechaTemp.mes < 12) {
-                fechaTemp.mes++;
+            if (fechaTemp.dia < cantDias(fechaTemp.mes)) {
+                fechaTemp.dia++;
             }else{
-                fechaTemp.mes = 1;
-                fechaTemp.anho++;
+                fechaTemp.dia = 1;
+                if (fechaTemp.mes < 12) {
+                    fechaTemp.mes++;
+                }else{
+                    fechaTemp.mes = 1;
+                    fechaTemp.anho++;
+                }
             }
-        }
             distDias++;
         }
         return distDias;
@@ -172,13 +189,21 @@ public class Fecha
         assert unMes > 0 && unMes <= 12;
         if(unMes == 2)
         {
-            if (esBisiesto(anho)){return 29;}else {return 28;}
+            if (esBisiesto(anho))
+            {
+                return 29;
+            }else 
+            {
+                return 28;
+            }
+        }else{
+            if(unMes == 1 || unMes == 3 || unMes == 5 || unMes == 7 || 
+            unMes == 8 || unMes == 10 || unMes == 12)
+            {
+                return 31;
+            }else
+            {return 30;}
         }
-        if(unMes == 1 || unMes == 3 || unMes == 5 || unMes == 7 || 
-        unMes == 8 || unMes == 10 || unMes == 12)
-        {
-            return 31;
-        }else{return 30;}
     }
     
     /**
